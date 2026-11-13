@@ -20,11 +20,11 @@ jobs:
       - name: Install OpenSpec
         run: npm install --global @fission-ai/openspec@1.16.0
       - name: Validate OpenSpec schema
-        run: ./scripts/validate-bundle.sh
+        run: sh scripts/validate-bundle.sh
       - name: Test bundle contract
-        run: ./tests/test-bundle.sh
+        run: sh tests/test-bundle.sh
       - name: Test upstream default retention
-        run: ./tests/test-upstream-defaults.sh
+        run: sh tests/test-upstream-defaults.sh
       - name: Test lifecycle resolution
-        run: ./tests/test-lifecycle.sh
+        run: sh tests/test-lifecycle.sh
 

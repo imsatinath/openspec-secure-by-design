@@ -8,30 +8,63 @@ It extends OpenSpec 1.16.0's bundled `spec-driven` schema additively. The defaul
 
 ## Lifecycle
 
-```text
-PLANNING
+```mermaid
+flowchart TD
+    Start([Start secure change])
 
-                    +--> specs/**/*.md --+
-proposal.md --------+                     +--> threat-model.md
-                    +--> design.md -------+          |
-                                                      v
-                                             security-plan.md
-                                                      |
-                                                      v
-                                                  tasks.md
-                                                      |
-                                           apply requires tasks
-                                                      v
-APPLY
+    subgraph Planning["PLANNING — OpenSpec artifacts"]
+        Proposal["proposal.md<br/>Default proposal + security impact screen<br/>Risk tier: LOW / STANDARD / HIGH"]
+        Specs["specs/**/*.md<br/>Default OpenSpec delta specs"]
+        Design["design.md<br/>Default design + security architecture"]
+        Threat["threat-model.md<br/>Assets, boundaries, threats, mitigations"]
+        SecurityPlan["security-plan.md<br/>Checks, tests, policy, traceability"]
+        Tasks["tasks.md<br/>Default tasks + security work"]
 
-  implement --> project tests and scanners --> verify.md
-                                                |
-                                                v
-                                      security-assurance.md
-                                                |
-                                 PASS / CONDITIONAL / FAIL
-                                                |
-                                    archive only when allowed
+        Proposal --> Specs
+        Proposal --> Design
+        Specs --> Threat
+        Design --> Threat
+        Threat --> SecurityPlan
+        Specs --> Tasks
+        Design --> Tasks
+        SecurityPlan --> Tasks
+    end
+
+    subgraph Apply["APPLY — ordered execution"]
+        Preflight["Security preflight<br/>Resolve unknowns and confirm authorized checks"]
+        Implement["Implement functional requirements<br/>mitigations and security tests"]
+        Checks["Run project tests and vulnerability checks<br/>SAST / SCA / secrets / IaC / container / DAST"]
+        Verify["verify.md<br/>Functional completeness and design coherence"]
+        Assurance["security-assurance.md<br/>Threat, mitigation, finding and evidence review"]
+        Verdict{"Assurance verdict"}
+
+        Preflight --> Implement --> Checks --> Verify --> Assurance --> Verdict
+    end
+
+    Human{"Named human accepts<br/>documented residual risk?"}
+    Archive["OpenSpec archive<br/>Sync delta specs and preserve change evidence"]
+    Complete([Ready for normal review / PR])
+
+    Start --> Proposal
+    Tasks ==>|"apply requires tasks"| Preflight
+    Verdict -->|PASS| Archive
+    Verdict -->|CONDITIONAL| Human
+    Verdict -->|FAIL| Implement
+    Human -->|Accepted| Archive
+    Human -->|Rejected| Implement
+    Archive --> Complete
+
+    classDef defaultArtifact fill:#e8f1ff,stroke:#2563eb,color:#111827
+    classDef securityArtifact fill:#fff4d6,stroke:#d97706,color:#111827
+    classDef process fill:#f3e8ff,stroke:#7e22ce,color:#111827
+    classDef decision fill:#fee2e2,stroke:#dc2626,color:#111827
+    classDef terminal fill:#dcfce7,stroke:#16a34a,color:#111827
+
+    class Proposal,Specs,Design,Tasks defaultArtifact
+    class Threat,SecurityPlan,Assurance securityArtifact
+    class Preflight,Implement,Checks,Verify,Archive process
+    class Verdict,Human decision
+    class Start,Complete terminal
 ```
 
 The artifact graph describes file readiness. `verify.md` and `security-assurance.md` become ready after `tasks.md` exists, but the apply instructions produce them only after implementation and checks have run.
@@ -130,10 +163,10 @@ tests/test-bundle.sh           Structural contract checks
 Requires OpenSpec 1.16.0 or newer:
 
 ```bash
-./scripts/validate-bundle.sh
-./tests/test-bundle.sh
-./tests/test-upstream-defaults.sh
-./tests/test-lifecycle.sh
+sh scripts/validate-bundle.sh
+sh tests/test-bundle.sh
+sh tests/test-upstream-defaults.sh
+sh tests/test-lifecycle.sh
 ```
 
 ## Community catalog submission

@@ -10,10 +10,10 @@ Thank you for improving `secure-by-design`.
 Run both checks before opening a pull request:
 
 ```bash
-./scripts/validate-bundle.sh
-./tests/test-bundle.sh
-./tests/test-upstream-defaults.sh
-./tests/test-lifecycle.sh
+sh scripts/validate-bundle.sh
+sh tests/test-bundle.sh
+sh tests/test-upstream-defaults.sh
+sh tests/test-lifecycle.sh
 ```
 
 ## Design rules
