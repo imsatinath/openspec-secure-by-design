@@ -85,7 +85,7 @@ The artifact graph describes file readiness. `verify.md` and `security-assurance
 From the root of an initialized OpenSpec project:
 
 ```bash
-git clone https://github.com/<your-account>/openspec-secure-by-design.git /tmp/openspec-secure-by-design
+git clone https://github.com/imsatinath/openspec-secure-by-design.git /tmp/openspec-secure-by-design
 cp -R /tmp/openspec-secure-by-design/secure-by-design openspec/schemas/secure-by-design
 openspec schema validate secure-by-design
 ```
