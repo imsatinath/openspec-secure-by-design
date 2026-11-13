@@ -1,0 +1,30 @@
+name: Validate schema
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version: 22
+      - name: Install OpenSpec
+        run: npm install --global @fission-ai/openspec@1.16.0
+      - name: Validate OpenSpec schema
+        run: ./scripts/validate-bundle.sh
+      - name: Test bundle contract
+        run: ./tests/test-bundle.sh
+      - name: Test upstream default retention
+        run: ./tests/test-upstream-defaults.sh
+      - name: Test lifecycle resolution
+        run: ./tests/test-lifecycle.sh
+

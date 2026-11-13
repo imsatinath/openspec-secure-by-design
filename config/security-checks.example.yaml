@@ -1,0 +1,53 @@
+version: 1
+
+# Copy to openspec/security-checks.yaml and replace example commands with the
+# project's reviewed commands. Commands execute with the current user's access.
+policy:
+  block_severities: [critical, high]
+  conditional_severities: [medium]
+  require_human_owner_for_exceptions: true
+  incomplete_required_check: fail
+
+checks:
+  - id: CHK-TEST
+    category: tests
+    required: true
+    command: "npm test"
+    report: null
+
+  - id: CHK-SAST
+    category: sast
+    required: false
+    command: "semgrep scan --config auto --json --output reports/semgrep.json"
+    report: reports/semgrep.json
+
+  - id: CHK-SCA
+    category: dependency
+    required: false
+    command: "npm audit --json > reports/npm-audit.json"
+    report: reports/npm-audit.json
+
+  - id: CHK-SECRETS
+    category: secrets
+    required: false
+    command: "gitleaks detect --report-format json --report-path reports/gitleaks.json"
+    report: reports/gitleaks.json
+
+  - id: CHK-IAC
+    category: iac
+    required: false
+    command: "trivy config --format json --output reports/trivy-iac.json ."
+    report: reports/trivy-iac.json
+
+  - id: CHK-CONTAINER
+    category: container
+    required: false
+    command: "trivy image --format json --output reports/trivy-image.json <image-ref>"
+    report: reports/trivy-image.json
+
+  - id: CHK-DAST
+    category: dast
+    required: false
+    command: "zap-baseline.py -t <authorized-test-url> -J reports/zap.json"
+    report: reports/zap.json
+
